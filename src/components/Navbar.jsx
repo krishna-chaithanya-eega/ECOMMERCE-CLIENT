@@ -1,8 +1,23 @@
-import { Badge } from "@material-ui/core";
-import { Search, ShoppingCartOutlined } from "@material-ui/icons";
+import {
+  Avatar,
+  Badge,
+  Box,
+
+  Divider,
+  IconButton,
+
+  Menu,
+  MenuItem,
+  Tooltip,
+
+} from "@material-ui/core";
+import {
+
+  ShoppingCartOutlined,
+} from "@material-ui/icons";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import styled from "styled-components";
 import { cartLogout } from "../redux/cartRedux";
 import { logout } from "../redux/userRedux";
@@ -30,26 +45,6 @@ const Left = styled.div`
   ${mobile({ display: "none" })}
 `;
 
-const Language = styled.span`
-  font-size: 14px;
-  cursor: pointer;
-  ${mobile({ display: "none" })}
-`;
-const SearchContainer = styled.div`
-  border: 0.25px solid lightgray;
-  display: flex;
-  align-items: center;
-  margin-left: 25px;
-  padding: 5px;
-`;
-const Input = styled.input`
-  border: none;
-  &:focus {
-    outline: none;
-  }
-  ${mobile({ width: "50px" })}
-`;
-
 const Center = styled.div`
   flex: 1;
   text-align: center;
@@ -66,65 +61,161 @@ const Right = styled.div`
   display: flex;
   align-items: center;
   justify-content: flex-end;
+
   ${mobile({ justifyContent: "center" })}
 `;
-const MenuItem = styled.div`
+
+const MenuItemdiv = styled.div`
   font-size: 14px;
   cursor: pointer;
   margin-left: 25px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  text-transform: capitalize;
+
   ${mobile({ fontSize: "12px", marginLeft: "10px" })}
 `;
 
-const Navbar = () => {
-  const dispatch=useDispatch()
-  const quantity = useSelector((state) => state.cart.quantity);
-  const user= useSelector((state) => state.user.currentUser);
+const MenuProfile = styled.div`
+  font-size: 14px;
+  cursor: pointer;
+  margin-left: 25px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  text-transform: capitalize;
+`;
 
-  
+const Navbar = () => {
+  const history = useHistory();
+  const dispatch = useDispatch();
+  const quantity = useSelector((state) => state.cart.quantity);
+  const user = useSelector((state) => state.user.currentUser);
+
+  console.log(user);
 
   const handleClick = (e) => {
     e.preventDefault();
 
     dispatch(logout());
-    dispatch(cartLogout())
+    dispatch(cartLogout());
+
+    history.push("/");
+  };
+
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const open = Boolean(anchorEl);
+  const handleClickButton = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
   };
 
   return (
     <Container>
       <Wrapper>
         <Left>
-          <Language>EN</Language>
+          {/* <Language>EN</Language>
           <SearchContainer>
             <Input />
             <Search style={{ color: "gray", fontSize: "16px" }} />
-          </SearchContainer>
+          </SearchContainer> */}
+          <Link to="/" className="link">
+            <Logo>EEGA.</Logo>
+          </Link>
         </Left>
-        <Center>
-        <Link to="/" className="link">
-
-          <Logo>EEGA.</Logo>
-        </Link>
-        </Center>
+        <Center></Center>
         <Right>
-        {
-          user? (<Link to="/register" className="link">
-            <MenuItem onClick={handleClick} >LOG OUT</MenuItem>
-          </Link>):(<>
-            <Link to="/register" className="link">
-            <MenuItem>REGISTER</MenuItem>
-          </Link>
-          <Link to="/login" className="link" >
-            <MenuItem>LOG IN</MenuItem>
-          </Link>
-          </>)
-        }
-          
-          <Link to="/cart" className="link" >
-            <MenuItem>
+          {user ? (
+            <>
+              <MenuProfile className="profile">
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    textAlign: "center",
+                  }}
+                >
+                  <Tooltip title="Account settings">
+                    <IconButton
+                      onClick={handleClickButton}
+                      size="small"
+                      sx={{ ml: 2 }}
+                      aria-controls={open ? "account-menu" : undefined}
+                      aria-haspopup="true"
+                      aria-expanded={open ? "true" : undefined}
+                    >
+                      <Avatar sx={{ width: '33px', height: '33px' }}>M</Avatar>
+                    </IconButton>
+                  </Tooltip>
+                </Box>
+                <Menu
+                  anchorEl={anchorEl}
+                  id="account-menu"
+                  open={open}
+                  onClose={handleClose}
+                  onClick={handleClose}
+                  PaperProps={{
+                    elevation: 0,
+                    sx: {
+                      overflow: "visible",
+                      filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+                      mt: 1.5,
+                      "& .MuiAvatar-root": {
+                        width: 32,
+                        height: 32,
+                        ml: -0.5,
+                        mr: 1,
+                      },
+                      "&:before": {
+                        content: '""',
+                        display: "block",
+                        position: "absolute",
+                        top: 0,
+                        right: 14,
+                        width: 10,
+                        height: 10,
+                        bgcolor: "background.paper",
+                        transform: "translateY(-50%) rotate(45deg)",
+                        zIndex: 0,
+                      },
+                    },
+                  }}
+                  getContentAnchorEl={null}
+                  anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                  transformOrigin={{ vertical: "top", horizontal: "right" }}
+                >
+                  <MenuItem>Profile</MenuItem>
+                  <MenuItem>My account</MenuItem>
+                  <Divider />
+
+                  <MenuItem onClick={handleClick}>
+                      
+                    
+                    Logout
+                  </MenuItem>
+                </Menu>
+              </MenuProfile>
+            </>
+          ) : (
+            <>
+              <Link to="/register" className="link">
+                <MenuItemdiv>REGISTER</MenuItemdiv>
+              </Link>
+              <Link to="/login" className="link">
+                <MenuItemdiv>LOGIN</MenuItemdiv>
+              </Link>
+            </>
+          )}
+
+          <Link to="/cart" className="link">
+            <MenuItemdiv>
               <Badge badgeContent={quantity} color="primary">
                 <ShoppingCartOutlined />
               </Badge>
-            </MenuItem>
+            </MenuItemdiv>
           </Link>
         </Right>
       </Wrapper>
