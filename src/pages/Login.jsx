@@ -99,6 +99,8 @@ const Login = () => {
     <Container>
       <Wrapper>
         <Title>LOG IN</Title>
+        <Title>CREDENTIALS username :admin password:123456</Title>
+
         <Form>
           <Input
             placeholder="Username"
@@ -117,6 +119,7 @@ const Login = () => {
           <Link>DO NOT REMEMBER THE PASSWORD?</Link>
           <Link>CREATE A NEW ACCOUNT</Link>
         </Form>
+
       </Wrapper>
     </Container>
   );
